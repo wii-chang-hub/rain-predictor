@@ -92,3 +92,5 @@ git push -u origin main
   所以模型調整時特別關注 recall（抓出真的會下雨的比例），而不是只看整體準確率。
 - **部署**：模型訓練完成後，把邏輯迴歸的係數匯出成JSON，前端網頁用JavaScript重新實作
   sigmoid推論邏輯，整個系統是純前端、部署在GitHub Pages上，不需要後端主機。
+
+ CWA-E822101E-F1FE-46FF-A0A3-3C87A8FF2DCD
