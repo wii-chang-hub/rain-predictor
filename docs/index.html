@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出門前的降雨預測小幫手</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>☔ 出門前的降雨預測小幫手</h1>
+    <p class="subtitle">用中央氣象署開放資料訓練的邏輯迴歸模型，判斷接下來要不要帶傘。模型直接在瀏覽器裡跑，不需要後端伺服器。</p>
+  </header>
+
+  <div class="card">
+    <h2>1. 輸入目前的氣象數值</h2>
+    <p class="note">先從模擬資料練習；申請到中央氣象署API金鑰後，可以在下方貼上金鑰，嘗試自動帶入即時觀測值。</p>
+    <div class="field-grid">
+      <div>
+        <label for="datetime">日期時間</label>
+        <input type="datetime-local" id="datetime">
+      </div>
+      <div>
+        <label for="pressure_change">過去3小時氣壓變化 (hPa)</label>
+        <input type="number" id="pressure_change" step="0.1" value="-0.5">
+      </div>
+      <div>
+        <label for="humidity">相對濕度 (%)</label>
+        <input type="number" id="humidity" step="1" value="75">
+      </div>
+      <div>
+        <label for="wind">風速 (m/s)</label>
+        <input type="number" id="wind" step="0.1" value="2.5">
+      </div>
+      <div>
+        <label for="temp">溫度 (°C)</label>
+        <input type="number" id="temp" step="0.1" value="24">
+      </div>
+    </div>
+    <button id="predictBtn">預測降雨機率</button>
+
+    <div class="result" id="resultBox">
+      <div>
+        降雨機率：<span class="prob" id="probText">--</span>
+        <span class="badge" id="badge">--</span>
+      </div>
+      <p id="adviceText" class="note"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2.（選用）用你自己的CWA API金鑰帶入即時觀測資料</h2>
+    <p class="note">
+      到 <a href="https://opendata.cwa.gov.tw/" target="_blank" rel="noopener">中央氣象署開放資料平台</a> 免費申請金鑰。
+      這個網頁是純前端靜態頁面（部署在GitHub Pages），沒有後端，金鑰只會存在你自己瀏覽器的localStorage、
+      直接從瀏覽器呼叫CWA API，不會經過任何第三方伺服器；但仍建議不要在公用電腦上使用這個功能。
+    </p>
+    <div class="field-grid">
+      <div style="grid-column: 1 / -1;">
+        <label for="apiKey">CWA API 金鑰</label>
+        <input type="text" id="apiKey" placeholder="CWA-XXXXXXXX-XXXX-...">
+      </div>
+    </div>
+    <button class="secondary" id="fetchBtn">抓取新竹即時觀測資料並帶入上方欄位</button>
+    <p class="note" id="fetchStatus"></p>
+  </div>
+
+  <div class="card">
+    <h2>模型效能（測試集，以時間切分避免資料洩漏）</h2>
+    <div class="metrics-grid" id="metricsGrid">
+      <div><div class="num">--</div><div class="label">Accuracy</div></div>
+      <div><div class="num">--</div><div class="label">Precision</div></div>
+      <div><div class="num">--</div><div class="label">Recall</div></div>
+      <div><div class="num">--</div><div class="label">F1</div></div>
+    </div>
+    <p class="note">
+      因為「沒帶傘卻下雨」的代價比「多帶一把傘」高，模型訓練時刻意用 class_weight=balanced
+      讓模型對降雨更敏感，優先確保 recall（抓出真的會下雨的比例），細節見
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub repo</a> 裡的
+      <code>scripts/train_model.py</code>。
+    </p>
+  </div>
+
+  <footer>
+    出門前的降雨預測小幫手 — 高中資訊/資安特殊選材備審專題 · 資料來源：中央氣象署開放資料平台
+  </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
